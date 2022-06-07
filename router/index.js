@@ -1,8 +1,11 @@
 const express = require("express");
 const pagesController = require("../controllers/pagesController");
 const userGameController = require("../controllers/userGameController");
+const authController = require("../controllers/authController");
 const router = express.Router();
 
+router.get("/register", authController.registerpage);
+router.post("/register", authController.register);
 router.get("/", pagesController.loginpage);
 router.post("/login", pagesController.loginadmin);
 router.get("/admin", pagesController.dashboard);
