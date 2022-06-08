@@ -2,19 +2,6 @@ const { UserGame, UserGameBiodata } = require("../models");
 const bcrypt = require("bcrypt");
 const passport = require("../lib/passport");
 
-const userAuth = async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const user = await UserGame.findOne({ where: { username } });
-    if (!user) return Promise.reject("User not found!");
-    const isPasswordValid = await bcrypt.compare(password, userAuth.password);
-    if (!isPasswordValid) return Promise.reject("Wrong password");
-    return Promise.resolve(user);
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
-
 module.exports = {
   registerpage: (req, res) => {
     res.render("pages/register/register", { layout: "layouts/login" });
