@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
   class UserGame extends Model {
@@ -14,7 +15,20 @@ module.exports = (sequelize, DataTypes) => {
         as: "UserGameBiodata",
       });
     }
+
+    // static async authenticate({ username, password }) {
+    //   try {
+    //     const user = await this.findOne({ where: { username } });
+    //     if (!user) return Promise.reject("User not found!");
+    //     const isPasswordValid = await bcrypt.compare(password, user.password);
+    //     if (!isPasswordValid) return Promise.reject("Wrong password");
+    //     return Promise.resolve(user);
+    //   } catch (err) {
+    //     return Promise.reject(err);
+    //   }
+    // }
   }
+
   UserGame.init(
     {
       username: DataTypes.STRING,

@@ -1,29 +1,29 @@
 const express = require("express");
-// const passport = require("./lib/passport");
-// const session = require("express-session");
-// const flash = require("express-flash");
+const passport = require("./lib/passport");
+const session = require("express-session");
+const flash = require("express-flash");
 const expressLayouts = require("express-ejs-layouts");
 const methodOverride = require("method-override");
 const router = require("./router");
 
-const PORT = 8000;
+const { PORT = 8000 } = process.env;
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 
-// app.use(
-//   session({
-//     secret: "Buat ini jadi rahasia",
-//     resave: false,
-//     saveUninitialized: false,
-//   })
-// );
+app.use(
+  session({
+    secret: "Buat ini jadi rahasia",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-// app.use(flash());
+app.use(flash());
 
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(methodOverride("_method"));
 app.use(express.json());
