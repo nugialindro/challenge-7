@@ -1,4 +1,5 @@
 const { UserGame, UserGameBiodata } = require("../models");
+const bcrypt = require("bcrypt");
 
 module.exports = {
   index: (req, res) => {
@@ -16,19 +17,24 @@ module.exports = {
     res.render("pages/admin/create");
   },
 
-  store: async (req, res) => {
-    const userGame = await UserGame.create({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-    });
-    await UserGameBiodata.create({
-      userGameId: userGame.id,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      phoneNumber: req.body.phoneNumber,
-    });
-    res.redirect("/admin");
+  store: async (req, res, next) => {
+    try {
+      const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+      const userGame = await UserGame.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: encryptedPassword,
+      });
+      await UserGameBiodata.create({
+        userGameId: userGame.id,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        phoneNumber: req.body.phoneNumber,
+      });
+      res.redirect("/admin");
+    } catch (err) {
+      next(err);
+    }
   },
 
   destroy: async (req, res) => {
@@ -48,11 +54,12 @@ module.exports = {
   },
 
   update: async (req, res) => {
+    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
     const userGame = await UserGame.update(
       {
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password,
+        password: encryptedPassword,
       },
       { where: { id: req.params.id } }
     );

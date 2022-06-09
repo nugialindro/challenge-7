@@ -48,7 +48,7 @@ a {
 }
 
 .list-user {
-  width: 700px;
+  width: 800px;
   padding: 40px;
   color: white;
   background: rgba(36, 36, 36, 0.4);
@@ -60,6 +60,10 @@ a {
 
 .mb-3 {
   margin: 0;
+}
+
+.table {
+  color: white;
 }
 
 .ttl-user,
