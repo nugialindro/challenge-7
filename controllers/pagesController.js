@@ -1,4 +1,4 @@
-const { UserGame, UserGameHistory } = require("../models");
+const { PlayerUser } = require("../models");
 
 module.exports = {
   loginpage: (req, res) => {
@@ -6,11 +6,11 @@ module.exports = {
   },
 
   dashboard: async (req, res) => {
-    const userdata = await UserGame.findAll();
+    const userdata = await PlayerUser.findAll();
     const jumlahUser = userdata.length;
-    const leaderboard = await UserGameHistory.findAll({
-      order: [["score", "desc"]],
-    });
-    res.render("pages/home/index", { jumlahUser, leaderboard });
+    // const leaderboard = await UserGameHistory.findAll({
+    //   order: [["score", "desc"]],
+    // });
+    res.render("pages/home/index", { jumlahUser });
   },
 };

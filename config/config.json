@@ -2,21 +2,21 @@
   "development": {
     "username": "postgres",
     "password": "password",
-    "database": "challenge_6_development",
+    "database": "challenge_7_development",
     "host": "localhost",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
     "password": "password",
-    "database": "challenge_6__test",
+    "database": "challenge_7__test",
     "host": "localhost",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
     "password": "password",
-    "database": "challenge_6__production",
+    "database": "challenge_7__production",
     "host": "localhost",
     "dialect": "postgres"
   }

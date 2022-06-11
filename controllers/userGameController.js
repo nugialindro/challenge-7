@@ -1,9 +1,9 @@
-const { UserGame, UserGameBiodata } = require("../models");
+const { PlayerUser, PlayerUserBiodata } = require("../models");
 const bcrypt = require("bcrypt");
 
 module.exports = {
   index: (req, res) => {
-    UserGame.findAll({
+    PlayerUser.findAll({
       order: [["id", "ASC"]],
     }).then((usergames) => {
       res.render("pages/admin/index", {
@@ -20,12 +20,12 @@ module.exports = {
   store: async (req, res, next) => {
     try {
       const encryptedPassword = await bcrypt.hash(req.body.password, 10);
-      const userGame = await UserGame.create({
+      const userGame = await PlayerUser.create({
         username: req.body.username,
         email: req.body.email,
         password: encryptedPassword,
       });
-      await UserGameBiodata.create({
+      await PlayerUser.create({
         userGameId: userGame.id,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -39,13 +39,13 @@ module.exports = {
 
   destroy: async (req, res) => {
     const { id } = req.params;
-    await UserGameBiodata.destroy({
+    await PlayerUserBiodata.destroy({
       where: {
         userGameId: id,
       },
     });
 
-    await UserGame.destroy({
+    await PlayerUser.destroy({
       where: {
         id: id,
       },
@@ -55,7 +55,7 @@ module.exports = {
 
   update: async (req, res) => {
     const encryptedPassword = await bcrypt.hash(req.body.password, 10);
-    const userGame = await UserGame.update(
+    const userGame = await PlayerUser.update(
       {
         username: req.body.username,
         email: req.body.email,
@@ -64,7 +64,7 @@ module.exports = {
       { where: { id: req.params.id } }
     );
 
-    await UserGameBiodata.update(
+    await PlayerUserBiodata.update(
       {
         userGameId: userGame.id,
         firstName: req.body.firstName,
@@ -78,22 +78,22 @@ module.exports = {
 
   show: async (req, res) => {
     const { id } = req.params;
-    const detail = await UserGame.findOne({
+    const detail = await PlayerUser.findOne({
       where: {
         id: id,
       },
-      include: "UserGameBiodata",
+      include: "PlayerUserBiodata",
     });
     res.render("pages/admin/show", {
-      pageTitle: `${UserGame.username} Data`,
+      pageTitle: `${PlayerUser.username} Data`,
       detail,
     });
   },
 
   editUser: async (req, res) => {
-    const usergame = await UserGame.findOne({
+    const usergame = await PlayerUser.findOne({
       where: { id: req.params.id },
-      include: "UserGameBiodata",
+      include: "PlayerUserBiodata",
     });
     res.render("pages/admin/edit", {
       pageTitle: "Edit User",

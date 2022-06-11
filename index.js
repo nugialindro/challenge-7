@@ -11,10 +11,11 @@ const { PORT = 8000 } = process.env;
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use(
   session({
-    secret: "Buat ini jadi rahasia",
+    secret: "inirahasia",
     resave: false,
     saveUninitialized: false,
   })
@@ -26,7 +27,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(methodOverride("_method"));
-app.use(express.json());
 
 app.use(express.static("public"));
 
