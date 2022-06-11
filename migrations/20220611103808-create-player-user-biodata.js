@@ -20,9 +20,10 @@ module.exports = {
         type: Sequelize.STRING,
       },
       playerUserId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: "PlayerUser",
+          model: "PlayerUsers",
           key: "id",
         },
       },

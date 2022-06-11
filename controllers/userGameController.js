@@ -25,8 +25,8 @@ module.exports = {
         email: req.body.email,
         password: encryptedPassword,
       });
-      await PlayerUser.create({
-        userGameId: userGame.id,
+      await PlayerUserBiodata.create({
+        playerUserId: userGame.id,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         phoneNumber: req.body.phoneNumber,
@@ -41,7 +41,7 @@ module.exports = {
     const { id } = req.params;
     await PlayerUserBiodata.destroy({
       where: {
-        userGameId: id,
+        playerUserId: id,
       },
     });
 
@@ -55,7 +55,7 @@ module.exports = {
 
   update: async (req, res) => {
     const encryptedPassword = await bcrypt.hash(req.body.password, 10);
-    const userGame = await PlayerUser.update(
+    const playerUser = await PlayerUser.update(
       {
         username: req.body.username,
         email: req.body.email,
@@ -66,7 +66,7 @@ module.exports = {
 
     await PlayerUserBiodata.update(
       {
-        userGameId: userGame.id,
+        userGameId: playerUser.id,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         phoneNumber: req.body.phoneNumber,
