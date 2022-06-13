@@ -29,7 +29,6 @@ router.post("/admin/create", userGameController.store);
 router.delete("/admin/:id", userGameController.destroy);
 
 // Game
-
 router.post("/game/create-room", gameController.createRoom);
 router.post("/game/room/:id", restrictUser, gameController.playGame);
 

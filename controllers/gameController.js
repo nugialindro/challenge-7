@@ -1,4 +1,4 @@
-const { Room, PlayGame } = require("../models");
+const { Room, PlayGame, PlayerUserHistory } = require("../models");
 const wait = {};
 const data = {}; // Ini ceritanya model disimpen ke database
 let p1;
@@ -14,14 +14,26 @@ const resultCondition = (p1, p2) => {
     return "Draw";
   }
   if (p1 === "rock") {
-    return p2 === "scissors" ? "player 1 Win " : "player 1 Lose";
+    return p2 === "scissors" ? "player 1 Win" : "player 1 Lose";
   }
   if (p1 === "papper") {
-    return p2 === "rock" ? "player 1 Win " : "player 1 Lose";
+    return p2 === "rock" ? "player 1 Win" : "player 1 Lose";
   }
   if (p1 === "scissors") {
-    return p2 === "papper" ? "player 1 Win " : "player 1 Lose";
+    return p2 === "papper" ? "player 1 Win" : "player 1 Lose";
   }
+};
+
+const whoWinLogic = (score1, score2) => {
+  let ket = {};
+  if (score1 === score2) {
+    ket = { player1: "draw", player2: "draw" };
+  } else if (score1 > score2) {
+    ket = { player1: "Win", player2: "Lose" };
+  } else if (score1 < score2) {
+    ket = { player1: "lose", player2: "win" };
+  }
+  return ket;
 };
 
 module.exports = {
@@ -39,11 +51,37 @@ module.exports = {
 
   playGame: async (req, res) => {
     const id = req.params.id;
+    let player1 = { scoreP1: 0 };
+    let player2 = { scoreP2: 0 };
 
     const roomExist = await PlayGame.findAll({ where: { roomId: id } });
 
-    console.log(roomExist[roomExist.length - 1]);
-    if (roomExist.length >= 3 && roomExist[roomExist.length - 1].p2Choose !== null) return res.json({ Result: roomExist });
+    const finalScore = roomExist.map((score) => {
+      player1 = score;
+      player2 = score;
+      if (score.resultCondition === "player 1 Win") {
+        player1.scoreP1 += 1;
+      } else if (score.resultCondition === "player 1 Lose") {
+        player2.scoreP2 += 1;
+      }
+    });
+
+    if (roomExist.length >= 3 && roomExist[roomExist.length - 1].p2Choose !== null) {
+      let result = whoWinLogic(player1.scoreP1, player2.scoreP2);
+      const historyExist = await PlayerUserHistory.findOne({
+        where: { roomId: id },
+      });
+      if (!historyExist) {
+        await PlayerUserHistory.create({
+          roomId: id,
+          resultGame: result.player1,
+        });
+        await PlayerUserHistory.create({
+          roomId: id,
+          resultGame: result.player2,
+        });
+      }
+    }
 
     if (!data[id]) {
       // Player 1 memilih
@@ -64,6 +102,7 @@ module.exports = {
       });
       await waitEnemyResponse(id);
     } else {
+      hasil = resultCondition(p1, p2Choose);
       await PlayGame.update(
         {
           p2Choose: req.body.p2Choose,
@@ -73,6 +112,7 @@ module.exports = {
           where: {
             roomId: id,
             p2Choose: null,
+            result: null,
           },
         }
       );
