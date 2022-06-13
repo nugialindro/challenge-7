@@ -67,7 +67,7 @@ a {
 }
 
 .ttl-user,
-.hgst-scr {
+.rcnt-game {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -80,7 +80,6 @@ a {
 }
 
 .cardous {
-  width: 300px;
   height: 300px;
   padding: 20px;
   color: white;

@@ -1,7 +1,8 @@
 const { Room, PlayGame, PlayerUserHistory } = require("../models");
 const wait = {};
-const data = {}; // Ini ceritanya model disimpen ke database
+const data = {};
 let p1;
+let hasil;
 
 function waitEnemyResponse(id) {
   return new Promise((resolve) => {
@@ -16,24 +17,24 @@ const resultCondition = (p1, p2) => {
   if (p1 === "rock") {
     return p2 === "scissors" ? "player 1 Win" : "player 1 Lose";
   }
-  if (p1 === "papper") {
+  if (p1 === "paper") {
     return p2 === "rock" ? "player 1 Win" : "player 1 Lose";
   }
   if (p1 === "scissors") {
-    return p2 === "papper" ? "player 1 Win" : "player 1 Lose";
+    return p2 === "paper" ? "player 1 Win" : "player 1 Lose";
   }
 };
 
-const whoWinLogic = (score1, score2) => {
-  let ket = {};
+const win = (score1, score2) => {
+  let winResult = {};
   if (score1 === score2) {
-    ket = { player1: "draw", player2: "draw" };
+    winResult = { player1: "draw", player2: "draw" };
   } else if (score1 > score2) {
-    ket = { player1: "Win", player2: "Lose" };
+    winResult = { player1: "Win", player2: "Lose" };
   } else if (score1 < score2) {
-    ket = { player1: "lose", player2: "win" };
+    winResult = { player1: "Lose", player2: "Win" };
   }
-  return ket;
+  return winResult;
 };
 
 module.exports = {
@@ -51,36 +52,31 @@ module.exports = {
 
   playGame: async (req, res) => {
     const id = req.params.id;
-    let player1 = { scoreP1: 0 };
-    let player2 = { scoreP2: 0 };
+    let player1Score = 0;
+    let player2Score = 0;
 
     const roomExist = await PlayGame.findAll({ where: { roomId: id } });
 
     const finalScore = roomExist.map((score) => {
-      player1 = score;
-      player2 = score;
-      if (score.resultCondition === "player 1 Win") {
-        player1.scoreP1 += 1;
-      } else if (score.resultCondition === "player 1 Lose") {
-        player2.scoreP2 += 1;
+      if (score.result === "player 1 Win") {
+        player1Score += 1;
+      } else if (score.result === "player 1 Lose") {
+        player2Score += 1;
       }
     });
 
     if (roomExist.length >= 3 && roomExist[roomExist.length - 1].p2Choose !== null) {
-      let result = whoWinLogic(player1.scoreP1, player2.scoreP2);
+      let result = win(player1Score, player2Score);
       const historyExist = await PlayerUserHistory.findOne({
         where: { roomId: id },
       });
       if (!historyExist) {
         await PlayerUserHistory.create({
           roomId: id,
-          resultGame: result.player1,
-        });
-        await PlayerUserHistory.create({
-          roomId: id,
-          resultGame: result.player2,
+          resultGame: `Player 1 : ${result.player1}, Player 2 : ${result.player2}`,
         });
       }
+      return res.json({ roomExist, player1Score, player2Score, result });
     }
 
     if (!data[id]) {
@@ -102,7 +98,7 @@ module.exports = {
       });
       await waitEnemyResponse(id);
     } else {
-      hasil = resultCondition(p1, p2Choose);
+      hasil = resultCondition(p1, req.body.p2Choose);
       await PlayGame.update(
         {
           p2Choose: req.body.p2Choose,
@@ -112,14 +108,13 @@ module.exports = {
           where: {
             roomId: id,
             p2Choose: null,
-            result: null,
           },
         }
       );
       wait[id].resolve();
       delete wait[id];
     }
-
+    res.json(hasil);
     res.json(data[id]);
   },
 };

@@ -14,14 +14,14 @@ router.post("/api/v1/auth/login", apiController.login);
 router.get("/api/v1/user", restrictUser, apiController.index);
 
 // Monolith
-router.get("/register", authController.registerpage);
+router.get("/register", restrict, authController.registerpage);
 router.post("/register", authController.register);
 router.get("/", pagesController.loginpage);
 router.get("/login", pagesController.loginpage);
 router.post("/login", authController.login);
 router.get("/admin", restrict, pagesController.dashboard);
-router.get("/admin/create", userGameController.create);
-router.get("/admin/user", userGameController.index);
+router.get("/admin/create", restrict, userGameController.create);
+router.get("/admin/user", restrict, userGameController.index);
 router.get("/admin/:id", userGameController.show);
 router.get("/admin/:id/edit", userGameController.editUser);
 router.put("/admin/edit/:id", userGameController.update);
@@ -29,7 +29,7 @@ router.post("/admin/create", userGameController.store);
 router.delete("/admin/:id", userGameController.destroy);
 
 // Game
-router.post("/game/create-room", gameController.createRoom);
+router.post("/game/create-room", restrictUser, gameController.createRoom);
 router.post("/game/room/:id", restrictUser, gameController.playGame);
 
 module.exports = router;

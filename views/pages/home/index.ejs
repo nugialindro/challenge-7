@@ -3,3 +3,23 @@
   <h3>Total User</h3>
   <h1><%= jumlahUser %></h1>
 </div>
+
+<div class="cardous rcnt-game">
+  <h3>Recent Game</h3>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Room Number</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% recentGame.map((historyGame) => { %>
+      <tr>
+        <td><%= historyGame.roomId %></td>
+        <td><%= historyGame.resultGame %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
