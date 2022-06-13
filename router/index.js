@@ -14,8 +14,6 @@ router.post("/api/v1/auth/login", apiController.login);
 router.get("/api/v1/user", restrictUser, apiController.index);
 
 // Monolith
-router.get("/register", restrict, authController.registerpage);
-router.post("/register", authController.register);
 router.get("/", pagesController.loginpage);
 router.get("/login", pagesController.loginpage);
 router.post("/login", authController.login);
